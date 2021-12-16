@@ -1,0 +1,195 @@
+drop table if exists BANK;
+drop table if exists BRANCH;
+drop table if exists ATM;
+drop table if exists LOAN;
+drop table if exists ACCOUNT;
+drop table if exists CHECKING;
+drop table if exists SAVINGS;
+drop table if exists CUSTOMER;
+drop table if exists TRANSACTIONS;
+
+create table BANK(
+ROUTING_NUMBER char(9),
+NAME varchar(20),
+CEO varchar(20),
+STREET_ADDRESS varchar(30),
+CITY varchar(20),
+STATE char(2),
+ZIPCODE char(5),
+constraint pk_bank primary key (ROUTING_NUMBER)
+);
+
+create table BRANCH(
+BRANCH_ID char(2),
+MANAGER varchar(20),
+STREET_ADDRESS varchar(30),
+CITY varchar(20),
+STATE char(2),
+ZIPCODE char(5),
+BANK_ID char(9),
+foreign key (BANK_ID) references BANK(ROUTING_NUMBER),
+constraint pk_branch primary key (BRANCH_ID, BANK_ID)
+);
+
+create table ATM(
+ATM_ID char(4),
+CASH_BALANCE decimal (10,2),
+STREET_ADDRESS varchar(30),
+CITY varchar(20),
+STATE char(2),
+ZIPCODE char(5),
+BANK_ID char (9),
+foreign key (BANK_ID) references BANK(ROUTING_NUMBER),
+constraint pk_atm primary key (ATM_ID, BANK_ID)
+);
+
+create table LOAN(
+LOAN_ID char(16),
+LOAN_TYPE varchar(20),
+AMOUNT decimal (10,2),
+INTEREST_RATE decimal (10,3),
+BRANCH_ID char(2),
+BANK_ID char(9),
+CUSTOMER_ID char(9),
+constraint pk_loan primary key (LOAN_ID)
+);
+
+create table CUSTOMER(
+SSN char(9),
+FNAME varchar(20),
+LNAME varchar(20),
+PHONE_NUM char(10),
+STREET_ADDRESS varchar(30),
+CITY varchar(20),
+STATE char(2),
+ZIPCODE char(5),
+constraint pk_customer primary key (SSN)
+);
+
+create table ACCOUNT(
+ACCOUNT_NUM char(12),
+BALANCE decimal (10,2),
+BRANCH_ID char(2),
+BANK_ID char(9),
+OWNER_ID char(9),
+constraint pk_account primary key (ACCOUNT_NUM)
+);
+
+create table CHECKING(
+CHECKING_NUM char(12),
+OVERDRAFT_LIMIT decimal (10,2),
+foreign key (CHECKING_NUM) references ACCOUNT (ACCOUNT_NUM)
+);
+
+create table SAVINGS(
+SAVINGS_NUM char(12),
+INTEREST_RATE decimal (4,3),
+foreign key (SAVINGS_NUM) references ACCOUNT (ACCOUNT_NUM)
+);
+
+create table TRANSACTIONS(
+TRANSACTION_ID char(16),
+SOURCE char(12),
+DESTINATION char(12),
+TRANSACTION_TYPE varchar(20),
+AMOUNT decimal (10,2),
+DATE date,
+ATM_ID char(4),
+BANK_ID char(9),
+constraint pk_transactions primary key (TRANSACTION_ID)
+);
+
+INSERT INTO BANK VALUES('061000104', 'Suntrust', 'William Rogers', '303 Peachtree Street NE', 'Atlanta', 'GA', '30308');
+INSERT INTO BANK VALUES('053000196', 'Bank of America', 'Bryan Moynihan', '100 N Tryon Street', 'Charlotte', 'NC', '28202');
+INSERT INTO BANK VALUES('021000021', 'JP Morgan Chase', 'Jamie Dimon', '270 Park Avenue', 'New York City', 'NY', '10172');
+INSERT INTO BANK VALUES('121042882', 'Wells Fargo', 'Charles Scharf', '420 Montgomery Street', 'San Francisco', 'CA', '94104');
+INSERT INTO BANK VALUES('042000314', 'Fifth Third Bank', 'Greg Carmichael', '38 Fountain Square Plaza', 'Cincinnati', 'OH', '45263');
+
+INSERT INTO BRANCH VALUES('07', 'Bryant Smith', '2880 Shallowford Rd', 'Marietta', 'GA', '30066', '061000104');
+INSERT INTO BRANCH VALUES('24', 'Marcus Alford', '103 City Cir', 'Peachtree City', 'GA', '30269', '061000104');
+INSERT INTO BRANCH VALUES('17', 'Marcus Alford', '1330 Highway 85 N', 'Fayetteville', 'GA', '30214', '061000104');
+INSERT INTO BRANCH VALUES('35', 'Liliana Valenza', '3445 Atlanta Highway', 'Athens', 'GA', '30606', '061000104');
+INSERT INTO BRANCH VALUES('68', 'Peter White', '162 College St', 'Asheville', 'NC', '28801', '053000196');
+INSERT INTO BRANCH VALUES('57', 'Samantha Bowers', '317 SE Greenville Blvd', 'Greenville', 'NC', '27858', '053000196');
+INSERT INTO BRANCH VALUES('24', 'Peter White', '2105 Pinecroft Rd', 'Greensboro', 'NC', '27407', '053000196');
+INSERT INTO BRANCH VALUES('13', 'Ian Carmichael', '5070 Southport Supply Rd SE', 'Southport', 'NC', '28461', '053000196');
+INSERT INTO BRANCH VALUES('51', 'Wilbert Manning', '155 Wolf Rd', 'Albany', 'NY', '12205', '021000021');
+INSERT INTO BRANCH VALUES('45', 'Brennan Leicester', '110 West Fayette St', 'Syracuse', 'NY', '13202', '021000021');
+INSERT INTO BRANCH VALUES('91', 'Ashley Dennings', '350 Main St', 'Buffalo', 'NY', '14202', '021000021');
+INSERT INTO BRANCH VALUES('03', 'Stacey Stratford', '400 Capitol Mall', 'Sacremento', 'CA', '95814', '121042882');
+INSERT INTO BRANCH VALUES('10', 'Katherine Mills', '2040 Franklin St', 'Oakland', 'CA', '94612', '121042882');
+INSERT INTO BRANCH VALUES('76', 'Edward Frasier', '1350 Fashion Valley Rd', 'San Diego', 'CA', '92108', '121042882');
+INSERT INTO BRANCH VALUES('77', 'Caroline Wicker', '1220 Cleveland Ave', 'San Diego', 'CA', '92103', '121042882');
+INSERT INTO BRANCH VALUES('69', 'John Ochabauer', '1200 Wilshire Blvd', 'Los Angeles', 'CA', '90017', '121042882');
+INSERT INTO BRANCH VALUES('87', 'Hunter Stratford', '2150 Sherman Ave', 'Cincinnati', 'OH', '45212', '042000314');
+INSERT INTO BRANCH VALUES('41', 'Patrick Hart', '21 East State St', 'Columbus', 'OH', '43215', '042000314');
+
+INSERT INTO ATM VALUES('0762', '5168.35', '2880 Shallowford Rd', 'Marietta', 'GA', '30066', '061000104');
+INSERT INTO ATM VALUES('1174', '9832.78', '1330 Highway 85 N', 'Fayetteville', 'GA', '30214', '061000104');
+INSERT INTO ATM VALUES('2350', '123.90', '3445 Atlanta Highway', 'Athens', 'GA', '30606', '061000104');
+INSERT INTO ATM VALUES('0001', '4046.78', '100 Edgewood Ave', 'Atlanta', 'GA', '30303', '061000104');
+INSERT INTO ATM VALUES('5678', '7894.21', '317 SE Greenville Blvd', 'Greenville', 'NC', '27858', '053000196');
+INSERT INTO ATM VALUES('0101', '98.01', '5070 Southport Supply Rd SE', 'Southport', 'NC', '28461', '053000196');
+INSERT INTO ATM VALUES('4041', '34513.54', '66 Courtland St', 'Atlanta', 'GA', '30303', '053000196');
+INSERT INTO ATM VALUES('0900', '6410.00', '110 West Fayette St', 'Syracuse', 'NY', '13202', '021000021');
+INSERT INTO ATM VALUES('1109', '23.75', '350 Main St', 'Buffalo', 'NY', '14202', '021000021');
+INSERT INTO ATM VALUES('0373', '7891.25', '400 Capitol Mall', 'Sacremento', 'CA', '95814', '121042882');
+INSERT INTO ATM VALUES('1000', '873.23', '2040 Franklin St', 'Oakland', 'CA', '94612', '121042882');
+INSERT INTO ATM VALUES('7692', '2341.62', '1350 Fashion Valley Rd', 'San Diego', 'CA', '92108', '121042882');
+INSERT INTO ATM VALUES('7792', '871.06', '1220 Cleveland Ave', 'San Diego', 'CA', '92103', '121042882');
+INSERT INTO ATM VALUES('6900', '9000.00', '1200 Wilshire Blvd', 'Los Angeles', 'CA', '90017', '121042882');
+INSERT INTO ATM VALUES('1872', '1872.30', '2150 Sherman Ave', 'Cincinnati', 'OH', '45212', '042000314');
+INSERT INTO ATM VALUES('0023', '32.13', '21 East State St', 'Columbus', 'OH', '43215', '042000314');
+
+INSERT INTO CUSTOMER VALUES('059203092', 'John', 'Smith', '3182283068', '2123 Rocky Creek Rd', 'Kennesaw', 'GA', '30144');
+INSERT INTO CUSTOMER VALUES('242996464', 'Laura', 'Daniels', '4043614435', '313 Washington St', 'Atlanta', 'GA', '30303');
+INSERT INTO CUSTOMER VALUES('770945546', 'Matthew', 'Chipps', '7708883710', '663 Aikenton Rd', 'Peachtree City', 'GA', '30269');
+INSERT INTO CUSTOMER VALUES('226990912', 'Stephen', 'Crocker', '5739248209', '226 Queens Dr', 'Charlotte', 'NC', '28204');
+INSERT INTO CUSTOMER VALUES('665202560', 'Calvin', 'Burgess', '8219019435', '3116 Kennys St', 'Pineville', 'NC', '28134');
+INSERT INTO CUSTOMER VALUES('203841823', 'Roger', 'Abrams', '2253063608', '1205 Partnership Way', 'Greenville', 'NC', '27858');
+INSERT INTO CUSTOMER VALUES('340809453', 'Cynthia', 'Brent', '6125972223', '115 Eaglewood Dr', 'Southport', 'NC', '28461');
+INSERT INTO CUSTOMER VALUES('639272071', 'Donald', 'Simpson', '6125045251', '226 Queens Dr', 'Charlotte', 'NC', '28204');
+INSERT INTO CUSTOMER VALUES('586673126', 'Norma', 'Thornton', '3158823097', '903 South Ave', 'Syracuse', 'NY', '13202');
+INSERT INTO CUSTOMER VALUES('001117965', 'Colin', 'Kay', '3156270531', '7470 Kirkville Rd', 'Syracuse', 'NY', '13057');
+INSERT INTO CUSTOMER VALUES('325115182', 'Andrew', 'Speight', '7168393062', '93 Fruehauf Ave', 'Buffalo', 'NY', '14226');
+INSERT INTO CUSTOMER VALUES('198849214', 'Barbara', 'Anne', '9164471785', '3036 Clay St', 'Sacremento', 'CA', '95815');
+INSERT INTO CUSTOMER VALUES('408998101', 'Winston', 'Terrell', '6197130927', '8737 Lake Murray Blvd', 'San Francisco', 'CA', '94104');
+INSERT INTO CUSTOMER VALUES('513316735', 'Cassandra', 'Davison', '3108158832', '3215 Overland Ave', 'Los Angeles', 'CA', '90034');
+INSERT INTO CUSTOMER VALUES('769963655', 'Dewayne', 'Brook', '5139619066', '4706 Beechwood Rd', 'Cincinnati', 'OH', '45244');
+INSERT INTO CUSTOMER VALUES('340808541', 'Tiphanie', 'Alvarado', '9378371133', '744 Fairgrove Way', 'Dayton', 'OH', '45426');
+
+INSERT INTO ACCOUNT VALUES('646737814671', '636240.90', '07', '061000104', '059203092');
+INSERT INTO ACCOUNT VALUES('730294198899', '907325.66', '07', '061000104', '059203092');
+INSERT INTO ACCOUNT VALUES('871912946406', '3629.83', '01', '061000104', '242996464');
+INSERT INTO ACCOUNT VALUES('446234764878', '85332.52', '24', '061000104', '770945546');
+INSERT INTO ACCOUNT VALUES('048606369291', '122547.01', '24', '061000104', '770945546');
+INSERT INTO ACCOUNT VALUES('014756311198', '10703.00', '57', '053000196', '665202560');
+INSERT INTO ACCOUNT VALUES('998911238094', '23030.41', '57', '053000196', '340809453');
+INSERT INTO ACCOUNT VALUES('120022755734', '1002.71', '57', '053000196', '340809453');
+INSERT INTO ACCOUNT VALUES('082333516587', '1932.10', '51', '021000021', '001117965');
+INSERT INTO ACCOUNT VALUES('003740048584', '690.44', '01', '121042882', '408998101');
+INSERT INTO ACCOUNT VALUES('005295810582', '90.07', '41', '042000314', '340808541');
+
+INSERT INTO CHECKING VALUES('646737814671', '5000.00');
+INSERT INTO CHECKING VALUES('871912946406', '1000.00');
+INSERT INTO CHECKING VALUES('446234764878', '2000.00');
+INSERT INTO CHECKING VALUES('120022755734', '500.00');
+INSERT INTO CHECKING VALUES('082333516587', '2500.00');
+
+INSERT INTO SAVINGS VALUES('730294198899', '2.125');
+INSERT INTO SAVINGS VALUES('048606369291', '1.5');
+INSERT INTO SAVINGS VALUES('014756311198', '2.75');
+INSERT INTO SAVINGS VALUES('998911238094', '3.00');
+INSERT INTO SAVINGS VALUES('003740048584', '1.30');
+INSERT INTO SAVINGS VALUES('005295810582', '5.00');
+
+INSERT INTO TRANSACTIONS VALUES('0000000000000001', '646737814671', '000000000000', 'withdrawal', '20.00', '2021-12-10', '0762', '061000104');
+INSERT INTO TRANSACTIONS VALUES('0000000000000002', '000000000000', '446234764878', 'deposit', '500.00', '2021-12-8', '2350', '061000104');
+INSERT INTO TRANSACTIONS VALUES('0000000000000003', '120022755734', '000000000000', 'withdrawal', '100.00', '2021-12-4', '5678', '053000196');
+INSERT INTO TRANSACTIONS VALUES('0000000000000004', '005295810582', '646737814671', 'transfer', '145.25', '2021-11-17', '0000', '042000314');
+INSERT INTO TRANSACTIONS VALUES('0000000000000005', '000000000000', '048606369291', 'deposit', '10.00', '2021-11-25', '0000', '061000104');
+
+INSERT INTO LOAN VALUES('0000000000000001', 'Car', '30000.00', '10.500', '24', '061000104', '639272071');
+INSERT INTO LOAN VALUES('0000000000000002', 'Business', '500000.00', '8.350', '91', '021000021', '769963655');
+INSERT INTO LOAN VALUES('0000000000000003', 'House', '700000.00', '9.125', '45', '021000021', '001117965');
+INSERT INTO LOAN VALUES('0000000000000004', 'Car', '50000.00', '15.750', '35', '061000104', '770945546');
